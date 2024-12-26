@@ -8,12 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.managedObjectContext) var moc
+    @FetchRequest(sortDescriptors: []) var expenses: FetchedResults<Expense>
+    
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            List(expenses) { expense in
+                Text(expense.name ?? "Unknown")
+            }
+            
+            // let expense = Expense(context: moc)
+            // expense.id = UUID()
+            // expense.name = name
+            // expense.price = price
+            // expense.date = date
+            // moc.save()
         }
         .padding()
     }
