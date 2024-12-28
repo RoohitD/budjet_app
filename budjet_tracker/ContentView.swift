@@ -18,49 +18,52 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                // Header showing total amount
-                Text("Total: $\(totalAmount, specifier: "%.2f")")
-                    .font(.headline)
-                    .padding()
-                
-                // List of expenses
-                List {
-                    ForEach(expenses, id: \.self) { expense in
-                        NavigationLink(value: expense) {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(expense.name ?? "Unknown")
-                                        .font(.headline)
-                                    if let date = expense.date {
-                                        Text("\(date, formatter: dateFormatter)")
-                                            .font(.subheadline)
-                                            .foregroundColor(.gray)
+            ZStack (alignment: .bottomTrailing){
+                VStack {
+                    // Header showing total amount
+                    Text("Total: $\(totalAmount, specifier: "%.2f")")
+                        .font(.headline)
+                        .padding()
+                    
+                    // List of expenses
+                    List {
+                        ForEach(expenses, id: \.self) { expense in
+                            NavigationLink(value: expense) {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(expense.name ?? "Unknown")
+                                            .font(.headline)
+                                        if let date = expense.date {
+                                            Text("\(date, formatter: dateFormatter)")
+                                                .font(.subheadline)
+                                                .foregroundColor(.gray)
+                                        }
                                     }
+                                    Spacer()
+                                    Text("$\(expense.price, specifier: "%.2f")")
+                                        .font(.headline)
                                 }
-                                Spacer()
-                                Text("$\(expense.price, specifier: "%.2f")")
-                                    .font(.headline)
                             }
                         }
                     }
+                    .navigationDestination(for: Expense.self) { expense in
+                        ExpenseDetailPage(expense: expense)
+                    }
                 }
-                .navigationDestination(for: Expense.self) { expense in
-                    ExpenseDetailPage(expense: expense)
-                }
+                .navigationTitle("Expenses")
                 
-                // Add Expense button
-                Button("Add Expense") {
+                Button {
                     addExpense()
+                } label: {
+                    Image(systemName: "plus")
                 }
-                .frame(maxWidth: .infinity)
+                .font(.title.weight(.semibold))
                 .padding()
                 .background(Color.blue)
                 .foregroundColor(.white)
-                .cornerRadius(10)
-                .padding(.horizontal)
+                .clipShape(Circle())
+                .padding()
             }
-            .navigationTitle("Expenses")
         }
     }
     
