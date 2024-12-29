@@ -11,6 +11,7 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) var moc
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Expense.date, ascending: false)])
     var expenses: FetchedResults<Expense>
+    @State private var showExpenseForm = false
     
     var totalAmount: Double {
         expenses.reduce(0) { $0 + $1.price }
@@ -20,10 +21,13 @@ struct ContentView: View {
         NavigationStack {
             ZStack (alignment: .bottomTrailing){
                 VStack {
-                    // Header showing total amount
-                    Text("Total: $\(totalAmount, specifier: "%.2f")")
-                        .font(.headline)
-                        .padding()
+                    HStack {
+                        Spacer()
+                        // Header showing total amount
+                        Text("Total: $\(totalAmount, specifier: "%.2f")")
+                            .font(.headline)
+                            .padding()
+                    }
                     
                     // List of expenses
                     List {
@@ -45,6 +49,7 @@ struct ContentView: View {
                                 }
                             }
                         }
+                        .onDelete(perform: delete)
                     }
                     .navigationDestination(for: Expense.self) { expense in
                         ExpenseDetailPage(expense: expense)
@@ -53,7 +58,8 @@ struct ContentView: View {
                 .navigationTitle("Expenses")
                 
                 Button {
-                    addExpense()
+                    showExpenseForm = true
+                    // addExpense()
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -63,21 +69,23 @@ struct ContentView: View {
                 .foregroundColor(.white)
                 .clipShape(Circle())
                 .padding()
+                .sheet(isPresented: $showExpenseForm) {
+                    ExpenseFormPage(moc: _moc, isPresented: $showExpenseForm)
+                }
             }
         }
     }
-    
-    func addExpense() {
-        let expense = Expense(context: moc)
-        expense.id = UUID()
-        expense.name = "Walmart"
-        expense.price = 19.98
-        expense.date = Date()
+
+    func delete(at offsets: IndexSet) {
+        for index in offsets {
+            let expense = expenses[index]
+            moc.delete(expense)
+        }
         
         do {
             try moc.save()
         } catch {
-            print("Error: \(error.localizedDescription)")
+            print("Error saving context after deletion: \(error.localizedDescription)")
         }
     }
 }
@@ -100,3 +108,4 @@ private let dateFormatter: DateFormatter = {
     formatter.timeStyle = .short
     return formatter
 }()
+
