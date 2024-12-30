@@ -20,7 +20,7 @@ struct ExpenseFormPage: View {
             Form {
                 TextField("Expense Name", text: $name)
                 TextField("Price", text: $price)
-                    .keyboardType(.numberPad)
+                    .keyboardType(.decimalPad)
                 DatePicker("Date", selection: $date)
             }
             .navigationTitle("Add Expense")
