@@ -14,44 +14,64 @@ struct ExpenseFormPage: View {
     @State private var date: Date = Date.now
     @Binding var isPresented: Bool
     
+    var formattedPrice: String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .currency
+        numberFormatter.currencySymbol = "$"
+        let number = Double(price) ?? 0.0
+        return numberFormatter.string(from: NSNumber(value: number)) ?? "$0.00"
+    }
+    
+    var isFormValid: Bool {
+        !name.isEmpty && Double(price) != nil
+    }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 TextField("Expense Name", text: $name)
-                TextField("Price", text: $price)
-                    .keyboardType(.decimalPad)
+                HStack {
+                    Text("$")
+                    TextField("Price", text: $price)
+                        .keyboardType(.decimalPad)
+                        .onChange(of: price) { _ in
+                            price = formattedPrice
+                        }
+                }
                 DatePicker("Date", selection: $date)
             }
             .navigationTitle("Add Expense")
             .toolbar {
                 ToolbarItem (placement: .confirmationAction){
                     Button("Add") {
-                        
-                        let newExpense = Expense(context: moc)
-                        newExpense.id = UUID()
-                        newExpense.name = name
-                        newExpense.price = Double(price) ?? 0
-                        newExpense.date = date
-                        
-                        do {
-                            try moc.save()
-                            isPresented = false
-                        } catch {
-                            print("Error saving expense: \(error.localizedDescription)")
-                        }
-                        
+                        addExpense()
                     }
+                    .disabled(!isFormValid)
                 }
-                
                 ToolbarItem (placement: .topBarLeading){
                     Button("Cancel", role: .cancel) {
                         isPresented = false
                     }
                 }
-
             }
         }
+    }
+    
+    func addExpense() {
+        guard isFormValid else { return }
+        
+        let expense = Expense(context: moc)
+        expense.id = UUID()
+        expense.name = name
+        expense.price = Double(price) ?? 0.0
+        expense.date = date
+        
+        do {
+            try moc.save()
+        } catch {
+            print("Error: \(error.localizedDescription)")
+        }
+        
     }
 }
 
