@@ -34,7 +34,7 @@ struct ExpenseFormPage: View {
                     Text("$")
                     TextField("Price", text: $price)
                         .keyboardType(.decimalPad)
-                        .onChange(of: price) { _ in
+                        .onChange(of: price) { _, _ in
                             price = formattedPrice
                         }
                 }
