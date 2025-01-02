@@ -16,22 +16,8 @@ class DataController: ObservableObject {
             if let error = error {
                 print("Core Data failed to load: \(error.localizedDescription)")
             }
+            
+            self.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         }
     }
-    
-    static var preview: DataController {
-        let dataController = DataController()
-        let viewContext = dataController.container.viewContext
-        
-        let expense = Expense(context: viewContext)
-        expense.id = UUID()
-        expense.name = "Test Expense"
-        expense.price = 100.00
-        expense.date = Date()
-        
-        try? viewContext.save()
-        return dataController
-    }
-    
-    
 }
