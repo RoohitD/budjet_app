@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ExpenseListView: View {
     @Environment(\.managedObjectContext) var moc
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Expense.date, ascending: false)])
-    var expenses: FetchedResults<Expense>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \ExpenseEntity.date, ascending: false)])
+    var expenses: FetchedResults<ExpenseEntity>
     
     var body: some View {
         // List of expenses
@@ -22,7 +22,7 @@ struct ExpenseListView: View {
             }
             .onDelete(perform: delete)
         }
-        .navigationDestination(for: Expense.self) { expense in
+        .navigationDestination(for: ExpenseEntity.self) { expense in
             ExpenseDetailPage(expense: expense)
         }
     }

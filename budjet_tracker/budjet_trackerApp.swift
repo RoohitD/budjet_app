@@ -14,6 +14,9 @@ struct budjet_trackerApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, dataController.container.viewContext)
+                .onAppear {
+                    dataController.ensureDefaultCategoryExists(context: dataController.container.viewContext)
+                }
         }
     }
 }

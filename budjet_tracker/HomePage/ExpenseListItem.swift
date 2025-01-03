@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExpenseListItem: View {
-    let expense: Expense
+    let expense: ExpenseEntity
     var body: some View {
         HStack {
             VStack(alignment: .leading) {

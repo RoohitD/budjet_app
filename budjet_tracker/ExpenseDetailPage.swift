@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExpenseDetailPage: View {
-    let expense: Expense
+    let expense: ExpenseEntity
     
     var body: some View {
         VStack(spacing: 16) {

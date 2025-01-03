@@ -10,12 +10,13 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.managedObjectContext) var moc
     @State private var showExpenseForm = false
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Expense.date, ascending: false)]) var expenses: FetchedResults<Expense>
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Category.name, ascending: false)]) var categories: FetchedResults<Category>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \ExpenseEntity.date, ascending: false)]) var expenses: FetchedResults<ExpenseEntity>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \CategoryEntity.name, ascending: false)]) var categories: FetchedResults<CategoryEntity>
     
     var totalAmount: Double {
         expenses.reduce(0) { $0 + $1.price }
     }
+    
     
     var body: some View {
         NavigationStack {
@@ -41,6 +42,7 @@ struct ContentView: View {
                 .sheet(isPresented: $showExpenseForm) {
                     ExpenseFormPage(moc: _moc, isPresented: $showExpenseForm)
                 }
+                
             }
         }
     }
@@ -50,10 +52,11 @@ struct ContentView: View {
     ContentView()
 }
 
-struct ContentVeiw_Previews: PreviewProvider {
+struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        let dataController = DataController.preview
         ContentView()
-            .environment(\.managedObjectContext, DataController.preview.container.viewContext)
+            .environment(\.managedObjectContext, dataController.container.viewContext)
     }
     
 }
