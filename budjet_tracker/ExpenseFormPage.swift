@@ -15,7 +15,7 @@ struct ExpenseFormPage: View {
     @Binding var isPresented: Bool
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \CategoryEntity.name, ascending: false)]) var categories: FetchedResults<CategoryEntity>
     @State private var selectedCategory: CategoryEntity? = nil
-    
+    @State private var showingAddCategorySheet: Bool = false
 //    var formattedPrice: String {
 //        let numberFormatter = NumberFormatter()
 //        numberFormatter.numberStyle = .currency
@@ -27,6 +27,7 @@ struct ExpenseFormPage: View {
     var isFormValid: Bool {
         !name.isEmpty && Double(price) != nil
     }
+    
     
     var body: some View {
         NavigationStack {
@@ -50,14 +51,29 @@ struct ExpenseFormPage: View {
                             Text(category.name ?? "Unnamed Category")
                                 .tag(category as CategoryEntity?)
                         }
+                        Divider()
+                        Button(action: {
+                            showingAddCategorySheet = true
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle")
+                                Text("Add Category")
+                            }
+                        }
+                        .foregroundColor(.blue)
+                        
                     }
                 }
             }
             .navigationTitle("Add Expense")
             .onAppear {
                 if selectedCategory == nil {
-                    selectedCategory = categories.first(where: { $0.name == "No Category"}) ?? categories.first
+                    let fallbackCategory = categories.indices.contains(1) ? categories[1] : nil
+                    selectedCategory = categories.first(where: { $0.name == "No Category" }) ?? fallbackCategory
                 }
+            }
+            .sheet(isPresented: $showingAddCategorySheet) {
+                AddCategoryView(isPresented: $showingAddCategorySheet)
             }
             .toolbar {
                 ToolbarItem (placement: .confirmationAction){
@@ -91,7 +107,6 @@ struct ExpenseFormPage: View {
         } catch {
             print("Error: \(error.localizedDescription)")
         }
-        
     }
 }
 

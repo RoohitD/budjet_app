@@ -17,6 +17,8 @@ struct ExpenseDetailPage: View {
             Text("")
             Text(expense.name ?? "No Name")
                 .font(.headline)
+            Text(expense.expenseTocategory?.name ?? "No Category")
+                .font(.caption)
             Text(DateFormatter().string(from: expense.date ?? Date()))
                 .font(.caption) // Place holder date when no date
         }
