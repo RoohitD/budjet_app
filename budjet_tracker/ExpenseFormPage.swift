@@ -51,18 +51,16 @@ struct ExpenseFormPage: View {
                             Text(category.name ?? "Unnamed Category")
                                 .tag(category as CategoryEntity?)
                         }
-                        Divider()
-                        Button(action: {
-                            showingAddCategorySheet = true
-                        }) {
-                            HStack {
-                                Image(systemName: "plus.circle")
-                                Text("Add Category")
-                            }
-                        }
-                        .foregroundColor(.blue)
-                        
                     }
+                    Button(action: {
+                        showingAddCategorySheet = true
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle")
+                            Text("Add Category")
+                        }
+                    }
+                    .foregroundColor(.blue)
                 }
             }
             .navigationTitle("Add Expense")
