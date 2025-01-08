@@ -17,17 +17,32 @@ struct ContentView: View {
         expenses.reduce(0) { $0 + $1.price }
     }
     
+    // Sample Picker options
+    enum ViewMode: String, CaseIterable, Identifiable {
+        case date = "By Date"
+        case category = "By Category"
+        var id: String { self.rawValue }
+    }
+    
+    @State private var selectedMode: ViewMode = .date
+    
     
     var body: some View {
         NavigationStack {
             ZStack (alignment: .bottomTrailing){
                 VStack {
                     HStack {
-                        Spacer()
                         // Header showing total amount
                         Text("Total: $\(totalAmount, specifier: "%.2f")")
                             .font(.headline)
-                            .padding()
+                            .padding(25)
+                        Spacer()
+                        Picker("View Mode", selection: $selectedMode) {
+                            ForEach(ViewMode.allCases) { mode in
+                                Text(mode.rawValue).tag(mode)
+                            }
+                        }
+                        .padding()
                     }
                     ExpenseListView()
                 }
