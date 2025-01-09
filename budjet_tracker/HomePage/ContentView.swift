@@ -32,24 +32,18 @@ struct ContentView: View {
         }
     }
     
-    var datedExpenses: [String: [ExpenseEntity]] {
-        Dictionary(grouping: expenses) { expense in
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MM/yyyy"
-            return formatter.string(from: expense.date ?? Date.distantPast)
-        }
-    }
-    
     var sortedDatedExpenses: [(key: String, value: [ExpenseEntity])] {
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/yyyy"
         
-        return datedExpenses
-            .sorted { lhs, rhs in
-                let lhsDate = formatter.date(from: lhs.key) ?? Date.distantPast
-                let rhsDate = formatter.date(from: rhs.key) ?? Date.distantPast
-                return lhsDate > rhsDate // Sort most recent to least recent
-            }
+        return Dictionary(grouping: expenses) { expense in
+            formatter.string(from: expense.date ?? Date.distantPast)
+        }
+        .sorted { lhs, rhs in
+            let lhsDate = formatter.date(from: lhs.key) ?? Date.distantPast
+            let rhsDate = formatter.date(from: rhs.key) ?? Date.distantPast
+            return lhsDate > rhsDate // Sort most recent to least recent
+        }
     }
     
     var currentExpenses: [(key: String, value: [ExpenseEntity])] {
