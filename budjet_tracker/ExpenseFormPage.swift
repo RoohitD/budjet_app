@@ -25,23 +25,37 @@ struct ExpenseFormPage: View {
 //    }
     
     var isFormValid: Bool {
-        !name.isEmpty && Double(price) != nil
+        !name.isEmpty && Double(price) != nil && Double(price)! > 0
     }
     
+    var isPriceValid: Bool {
+        price.isEmpty || Double(price) != nil
+    }
     
     var body: some View {
         NavigationStack {
             Form {
                 Section {
                     TextField("Expense Name", text: $name)
-                    HStack {
-                        Text("$")
-                        TextField("Price", text: $price)
-                            .keyboardType(.decimalPad)
-//                            .onChange(of: price) { _, _ in
-//                                price = formattedPrice
-//                            }
+                    VStack {
+                        HStack {
+                            Text("$")
+                            TextField("Price", text: $price)
+                                .keyboardType(.decimalPad)
+                        }
+                        HStack {
+                            if !isPriceValid {
+                                Text("Must be a valid price.")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal)
+                                Spacer()
+                            }
+                        }
+                        //.transition(.opacity)
                     }
+                    .frame(height: !isPriceValid ? 20 : 0) // Adjust height dynamically
+                    .animation(.easeInOut, value: isPriceValid)
                     DatePicker("Date", selection: $date)
                 }
                 
